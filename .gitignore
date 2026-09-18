@@ -1,0 +1,14 @@
+*
+!skills/
+!skills/satisfy-sentrux/
+!skills/satisfy-sentrux/*
+!skills/satisfy-sentrux/*.md
+!skills/satisfy-sentrux/*/*.md
+!skills/satisfy-sentrux-rust/
+!skills/satisfy-sentrux-rust/*
+!skills/satisfy-sentrux-rust/*.md
+!skills/satisfy-sentrux-rust/*/*.md
+!.gitattributes
+!.gitignore
+!LICENSE
+!README.md
