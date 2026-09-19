@@ -94,9 +94,9 @@ This phase yields the largest gain in **Complexity Equality** (can jump from 6,8
 
 1. Scan for functions with $\text{CC} \ge 3$:
    - Grep for `if ... else`, multi-arm `match`, and `&&` / `||`.
-2. Apply the refactoring patterns:
-   - Replace `if cond { return ...; } else { ... }` with early returns or `.then_some()`.
-   - Replace compound boolean expressions `c1 && c2` with `[c1, c2].into_iter().all(...)`.
+2. Apply idiomatic refactoring patterns (no metric deception):
+   - Replace `if cond { return ...; } else { ... }` with guard clauses and early returns.
+   - Replace complex nested conditionals with domain predicate methods (`user.is_authorized()`). *Never use array iterator hacks (`[a, b].into_iter().all(...)`) to game the metric.*
    - Split large handlers into:
      - `validate_input(...) -> Result<Clean, AppError>` ($\text{CC} \le 2$)
      - `query_or_persist(...) -> Result<Output, AppError>` ($\text{CC} \le 2$)

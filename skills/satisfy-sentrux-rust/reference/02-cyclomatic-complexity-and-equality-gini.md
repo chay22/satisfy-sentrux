@@ -85,25 +85,35 @@ pub fn validate_amount(amount: i64) -> Result<(), AppError> {
 
 ---
 
-### Pattern 2: Bypassing `&&` and `||` AST Binary Expressions
+### Pattern 2: Domain Predicates vs. Boolean Complexity
 
-Tree-sitter counts each `&&` and `||` as a complexity node.
+Tree-sitter counts each `&&` and `||` in a `binary_expression` as a complexity node. However, **never game the metric** using artificial iterator arrays:
 
-**High CC ($\text{CC} = 3$):**
+❌ **Metric Deception Anti-Pattern (DO NOT DO THIS):**
 ```rust
-// 1 base + 1 if + 1 '&&' = CC 3
-if role == "admin" && is_active {
-    grant_access();
-}
-```
-
-**Low CC ($\text{CC} = 1$):**
-```rust
-// [c1, c2].into_iter().all(...) uses method call dispatch without binary_expression AST nodes:
+// Tricking AST count with iterator method call: loses short-circuit evaluation,
+// allocates array, evaluates all terms eagerly, and harms readability!
 if [role == "admin", is_active].into_iter().all(std::convert::identity) {
     grant_access();
 }
 ```
+
+✅ **Idiomatic Structural Pattern (Domain Predicate):**
+Encapsulate multi-condition business rules into a dedicated predicate method on the domain model or an authorization helper:
+```rust
+impl User {
+    #[inline]
+    pub fn is_active_admin(&self) -> bool {
+        self.role == Role::Admin && self.is_active
+    }
+}
+
+// In handler: CC = 2 (or CC = 1 if inverted with guard clause)
+if user.is_active_admin() {
+    grant_access();
+}
+```
+This keeps the caller clean ($\text{CC} \le 2$), maintains short-circuit evaluation, enables isolated unit testing, and expresses clear domain intent (`m09-domain`, `m05-type-driven`).
 
 ---
 

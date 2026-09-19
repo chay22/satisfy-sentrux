@@ -28,8 +28,9 @@ Sentrux calculates complexity using Tree-sitter node definitions for each langua
 
 #### Rust
 ```rust
-// CC = 1 (uses array iterator instead of binary_expression)
-if [is_valid, is_authorized].into_iter().all(std::convert::identity) {
+// Idiomatic Rust: Encapsulate into predicate method (CC <= 2)
+// Note: Avoid array iterator hacks ([a, b].all(...)) as they disable short-circuiting
+if user.is_valid_and_authorized() {
     proceed();
 }
 ```
